@@ -18,7 +18,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'admin123',
-  database: 'mydatabase',
+  database: 'jware',
 });
 
 connection.connect();
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.post('/register', (req, res) => {
   const { name, email, password } = req.body;
 
-  // Hash password before storing it in the database
+  // Encrypt password before storing it in the database
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   // User registration in the database
@@ -42,7 +42,7 @@ app.post('/register', (req, res) => {
         console.log(err);
         res.status(500).json({ message: 'Failed to register user' });
       } else {
-        res.json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'User registered successfully' });
       }
     }
   );
@@ -103,8 +103,8 @@ app.get('/nic-to-dob/:nic', (req, res) => {
           let days = parseInt(nic.substring(2, 5));
           const gender = days < 500 ? 'Male' : 'Female';
 
-          if (days > 365) {
-            days = days % 365;
+          if (gender === 'Female') {
+            days = days - 500;
           }
 
           const startOfYear = moment({ year: 1900 + year, month: 0, day: 1 });
@@ -114,8 +114,6 @@ app.get('/nic-to-dob/:nic', (req, res) => {
           res.json({
             dob: dob.format('YYYY-MM-DD'),
             gender: gender,
-            year: year,
-            days: days,
           });
         }
       }
