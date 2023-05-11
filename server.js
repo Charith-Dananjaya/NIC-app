@@ -107,12 +107,21 @@ app.get('/nic-to-dob/:nic', (req, res) => {
             days = days - 500;
           }
 
-          const startOfYear = moment({ year: 1900 + year, month: 0, day: 1 });
+          const startOfYear = moment({ year: 2000, month: 0, day: 1 });
           const dob = startOfYear.clone().add(days - 1, 'days');
+
+          const month = dob.month();
+          const date = dob.date();
+
+          const dateOfBirth = moment({
+            year: 1900 + year,
+            month: month,
+            day: date,
+          });
 
           // Return the date of birth as a JSON response
           res.json({
-            dob: dob.format('YYYY-MM-DD'),
+            dob: dateOfBirth.format('YYYY-MM-DD'),
             gender: gender,
           });
         }
